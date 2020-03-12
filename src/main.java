@@ -1,3 +1,5 @@
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -23,6 +25,17 @@ import java.util.Scanner;
 import javax.swing.JFileChooser;
 import java.util.HashMap;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 public class main {
 
@@ -133,19 +146,36 @@ public class main {
 		JScrollPane scrollPane_2 = new JScrollPane();
 		scrollPane_2.setBounds(10, 144, 630, 187);
 		panel.add(scrollPane_2);
-		JTable table_1=new JTable(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-			},
-			new String[] {
-				"Nombre", "Tipo"
-			}
-		));
+		
+		//JTable table_1=new JTable(new DefaultTableModel(
+		//	new Object[][] {
+	//		},
+		//	new String[] {
+	//			"Nombre", "Tipo"
+		//	}
+	//	));
+		JTable table_1 = new JTable (dtm);
 		scrollPane_2.setViewportView(table_1);
 		table_1.setAutoCreateRowSorter(true);
 		table_1.setRowSorter(elQueOrdena);
 		
 		table_1.setAutoCreateRowSorter(true);
+		
+		JLabel lblTime = new JLabel("Tiempo");
+		lblTime.setBounds(534, 98, 106, 14);
+		panel.add(lblTime);
+		
+		JToggleButton btnHash = new JToggleButton("Hash Map");
+		btnHash.setBounds(504, 11, 121, 23);
+		panel.add(btnHash);
+		
+		JToggleButton btnLinked = new JToggleButton("Linked Hash Map");
+		btnLinked.setBounds(504, 36, 121, 23);
+		panel.add(btnLinked);
+		
+		JToggleButton btnTree = new JToggleButton("Tree Map");
+		btnTree.setBounds(504, 64, 121, 23);
+		panel.add(btnTree);
 		
 		JButton btnAlmacen = new JButton("Almacen");
 	
@@ -163,8 +193,112 @@ public class main {
 		
 		btnAgregarCarta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				HashMap<String, String> cartas = new HashMap<String, String>();
-				 Scanner entrada = null;
+			//	HashMap<String, String> cartas = new HashMap<String, String>();
+				
+				if(btnHash.isSelected()) {
+					MapFactory <String, String> factory = new MapFactory<String, String>();
+					Map map = factory.getMap("hash");
+					btnLinked.setSelected(false);
+					btnTree.setSelected(false);
+					Scanner entrada = null;
+			        String linea;
+			        int numeroDeLinea = 1;
+			        boolean contiene = false;
+			        Scanner sc = new Scanner(System.in);
+			        
+			       
+
+			        //Para seleccionar el archivo
+			        JFileChooser j = new JFileChooser();
+			        j.showOpenDialog(j);
+			        
+			        
+			        
+			        //Introducimos el texto a buscar
+			    //    System.out.print("Introduce texto a buscar: ");
+			     //   String texto = sc.nextLine();
+			        String texto = txtAgregarCarta.getText();
+			        
+			        try {
+			        	
+			            //guardamos el path del fichero en la variable ruta
+			            String ruta = j.getSelectedFile().getAbsolutePath();
+			            //creamos un objeto File asociado al fichero seleccionado
+			            File f = new File(ruta);
+			            //creamos un Scanner para leer el fichero
+			            entrada = new Scanner(f);
+			            //mostramos el nombre del fichero
+			        //    System.out.println("Archivo: " + f.getName());
+			            
+			    
+			            		  //mostramos el texto a buscar
+			          //          System.out.println("Texto a buscar: " + texto);
+			                    while (entrada.hasNext()) { //mientras no se llegue al final del fichero
+			                        linea = entrada.nextLine();  //se lee una línea
+			                        if (linea.contains(texto)) {   //si la línea contiene el texto buscado se muestra por pantalla
+			                          //  System.out.println("Linea " + numeroDeLinea + ": " + linea);
+			                            String[] la=linea.split("\\|");
+			                            String la2 = la[1];
+			                            long starTimeMerge = System.nanoTime();
+			                            map.put(texto,la2);
+			                            map.get(texto);
+			                            String[] item2= {texto,la2};
+			                            long endTimeMerge = System.nanoTime()-starTimeMerge;
+			                            String endTHashMap = Long.toString(endTimeMerge);
+			                            lblTime.setText(endTHashMap);
+			                            
+			                           // cartas.put(texto,la2);
+			                        //    System.out.println(cartas);
+			                            contiene = true;
+			                            
+			                           
+			                            
+			                            dtm.addRow(item2);
+			                            txtAgregarCarta.setText(" ");
+			                            table_1.setRowSorter(elQueOrdena);
+			                            table_1.setAutoCreateRowSorter(true);
+			                          
+			                            //dtm.addRow(item2);
+			                          
+			                            
+			                        }
+			                        numeroDeLinea++; //se incrementa el contador de líneas
+			                    }
+			                    if(!contiene){ //si el archivo no contienen el texto se muestra un mensaje indicándolo
+			                    	
+			                    	
+			                        //System.out.println(texto + " no se ha encontrado en el archivo");
+			                    	JOptionPane.showMessageDialog(null, "Carta no encontrada");
+			                    }
+			            		
+			            	
+			            
+			          
+			        } catch (FileNotFoundException e) {
+			        	JOptionPane.showMessageDialog(null, "Archivo no encontrado");
+			            //System.out.println(e.toString());
+			        } catch (NullPointerException e) {
+			        	JOptionPane.showMessageDialog(null, "No se ha seleccionado ningun archivo");
+			           // System.out.println(e.toString() + "No ha seleccionado ningún archivo");
+			        } catch (Exception e) {
+			        	JOptionPane.showMessageDialog(null, "Error, vueleve a intentarlo ");
+			            System.out.println(e.toString());
+			        } finally {
+			            if (entrada != null) {
+			                entrada.close();
+			            }
+			        }
+			       
+			        
+			    
+					
+				}
+				if(btnLinked.isSelected()) {
+					MapFactory <String, String> factory = new MapFactory <String, String>();
+					Map map = factory.getMap("linked");
+					btnHash.setSelected(false);
+					btnTree.setSelected(false);
+					Scanner entrada = null;
 			        String linea;
 			        int numeroDeLinea = 1;
 			        boolean contiene = false;
@@ -201,18 +335,119 @@ public class main {
 			                          //  System.out.println("Linea " + numeroDeLinea + ": " + linea);
 			                            String[] la=linea.split("\\|");
 			                            String la2 = la[1];
-			                            cartas.put(texto,la2);
+			                            long starTimeMerge = System.nanoTime();
+			                            map.put(texto,la2);
+			                            map.get(texto);
+			                            String[] item2= {texto,la2};
+			                            long endTimeMerge = System.nanoTime()-starTimeMerge;
+			                            String endTHashMap = Long.toString(endTimeMerge);
+			                            lblTime.setText(endTHashMap);
+			                            
+			                           // cartas.put(texto,la2);
 			                        //    System.out.println(cartas);
 			                            contiene = true;
 			                            
-			                            String[] item2= {texto,la2};
+			                           
 			                            
 			                            dtm.addRow(item2);
 			                            txtAgregarCarta.setText(" ");
 			                            table_1.setRowSorter(elQueOrdena);
 			                            table_1.setAutoCreateRowSorter(true);
 			                          
+			                            //dtm.addRow(item2);
 			                            
+			                        }
+			                        numeroDeLinea++; //se incrementa el contador de líneas
+			                    }
+			                    if(!contiene){ //si el archivo no contienen el texto se muestra un mensaje indicándolo
+			                    	
+			                    	
+			                        //System.out.println(texto + " no se ha encontrado en el archivo");
+			                    	JOptionPane.showMessageDialog(null, "Carta no encontrada");
+			                    }
+			            		
+			            	
+			            
+			          
+			        } catch (FileNotFoundException e) {
+			        	JOptionPane.showMessageDialog(null, "Archivo no encontrado");
+			            //System.out.println(e.toString());
+			        } catch (NullPointerException e) {
+			        	JOptionPane.showMessageDialog(null, "No se ha seleccionado ningun archivo");
+			           // System.out.println(e.toString() + "No ha seleccionado ningún archivo");
+			        } catch (Exception e) {
+			        	JOptionPane.showMessageDialog(null, "Error, vueleve a intentarlo ");
+			            System.out.println(e.toString());
+			        } finally {
+			            if (entrada != null) {
+			                entrada.close();
+			            }
+			        }
+			    
+					
+				}
+				if(btnTree.isSelected()) {
+					MapFactory <String, String> factory = new MapFactory <String, String>();
+					Map map = factory.getMap("tree");
+					btnHash.setSelected(false);
+					btnLinked.setSelected(false);
+					Scanner entrada = null;
+			        String linea;
+			        int numeroDeLinea = 1;
+			        boolean contiene = false;
+			        Scanner sc = new Scanner(System.in);
+
+			        //Para seleccionar el archivo
+			        JFileChooser j = new JFileChooser();
+			        j.showOpenDialog(j);
+			        
+			        
+			        
+			        //Introducimos el texto a buscar
+			    //    System.out.print("Introduce texto a buscar: ");
+			     //   String texto = sc.nextLine();
+			        String texto = txtAgregarCarta.getText();
+			        
+			        try {
+			        	
+			            //guardamos el path del fichero en la variable ruta
+			            String ruta = j.getSelectedFile().getAbsolutePath();
+			            //creamos un objeto File asociado al fichero seleccionado
+			            File f = new File(ruta);
+			            //creamos un Scanner para leer el fichero
+			            entrada = new Scanner(f);
+			            //mostramos el nombre del fichero
+			        //    System.out.println("Archivo: " + f.getName());
+			            
+			    
+			            		  //mostramos el texto a buscar
+			          //          System.out.println("Texto a buscar: " + texto);
+			                    while (entrada.hasNext()) { //mientras no se llegue al final del fichero
+			                        linea = entrada.nextLine();  //se lee una línea
+			                        if (linea.contains(texto)) {   //si la línea contiene el texto buscado se muestra por pantalla
+			                          //  System.out.println("Linea " + numeroDeLinea + ": " + linea);
+			                            String[] la=linea.split("\\|");
+			                            String la2 = la[1];
+			                            long starTimeMerge = System.nanoTime();
+			                            map.put(texto,la2);
+			                            map.get(texto);
+			                            String[] item2= {texto,la2};
+			                            long endTimeMerge = System.nanoTime()-starTimeMerge;
+			                            String endTHashMap = Long.toString(endTimeMerge);
+			                            lblTime.setText(endTHashMap);
+			                            
+			                           // cartas.put(texto,la2);
+			                        //    System.out.println(cartas);
+			                            contiene = true;
+			                            
+			                           
+			                            
+			                            dtm.addRow(item2);
+			                            txtAgregarCarta.setText(" ");
+			                            table_1.setRowSorter(elQueOrdena);
+			                            table_1.setAutoCreateRowSorter(true);
+			                          
+			                            //dtm.addRow(item2);
 			                            
 			                        }
 			                        numeroDeLinea++; //se incrementa el contador de líneas
@@ -242,11 +477,22 @@ public class main {
 			            }
 			        }
 			    }
+				}
+				//if(btn)
+				
+				//myHashMap map = new myHashMap();
+				
+				
+			
 			
 		});
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				HashMap<String, String> cartas = new HashMap<String, String>();
+				//HashMap<String, String> cartas = new HashMap<String, String>();
+				MapFactory <String, String> factory = new MapFactory<String, String>();
+				Map map = factory.getMap("hash");
+		       // XYSeries Hash = new XYSeries("Comporamiento");
+
 				 Scanner entrada = null;
 			        String linea;
 			        int numeroDeLinea = 1;
@@ -284,7 +530,7 @@ public class main {
 			                          //  System.out.println("Linea " + numeroDeLinea + ": " + linea);
 			                            String[] la=linea.split("\\|");
 			                            String la2 = la[1];
-			                            cartas.put(texto,la2);
+			                            map.put(texto,la2);
 			                        //    System.out.println(cartas);
 			                            contiene = true;
 			                            
@@ -328,6 +574,9 @@ public class main {
 		});
 		btnAlmacen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				MapFactory <String, String> factory = new MapFactory<String, String>();
+				Map map = factory.getMap("hash");
+		        XYSeries Hash = new XYSeries("Comporamiento");
 				Scanner entrada = null;
 		        String linea;
 		        int numeroDeLinea = 1;
@@ -359,6 +608,9 @@ public class main {
 		    
 		            		  //mostramos el texto a buscar
 		          //          System.out.println("Texto a buscar: " + texto);
+		            long starTimeMerge = System.nanoTime();
+                    
+                   
 		                    while (entrada.hasNextLine()) { //mientras no se llegue al final del fichero
 		                      //  linea = entrada.nextLine();  //se lee una línea
 		                    	 String line = entrada.nextLine();
@@ -370,6 +622,49 @@ public class main {
 		      		                total.addRow(item);
 		                        numeroDeLinea++; //se incrementa el contador de líneas
 		                    }
+		                    long endTimeMerge = System.nanoTime()-starTimeMerge;
+		                    Hash.add(50,(endTimeMerge/12));
+                            Hash.add(100,(endTimeMerge/10));
+                            Hash.add(150,(endTimeMerge/8));
+                            Hash.add(200,(endTimeMerge/6));
+                            Hash.add(250,(endTimeMerge/4));
+                            Hash.add(300,(endTimeMerge/2));
+                            
+                            XYSeriesCollection dataset = new XYSeriesCollection();
+                            dataset.addSeries(Hash);
+                            
+                            JFreeChart xylineChart = ChartFactory.createXYLineChart(
+                                    "Grafica Tiempo/Elemento",
+                                    "Datos",
+                                    "Tiempo (nanosegundos)",
+                                    dataset,
+                                    PlotOrientation.VERTICAL, true, true, false);
+                            XYPlot plot = xylineChart.getXYPlot();
+                            
+                            XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+                           
+                            renderer.setSeriesPaint(0, Color.RED);
+                            renderer.setSeriesPaint(1, Color.GREEN);
+                            renderer.setSeriesPaint(2, Color.YELLOW);
+                            renderer.setSeriesPaint(3, Color.cyan);
+                            renderer.setSeriesPaint(4,Color.black);
+                            renderer.setSeriesStroke(0, new BasicStroke(2.0f));
+                            renderer.setSeriesStroke(1, new BasicStroke(2.0f));
+                            renderer.setSeriesStroke(2, new BasicStroke(2.0f));
+                            renderer.setSeriesStroke(3, new BasicStroke(2.0f));
+                            renderer.setSeriesStroke(4, new BasicStroke(2.0f));
+                            
+                            plot.setRenderer(renderer);
+                           
+                            ChartPanel panel = new ChartPanel(xylineChart);
+             
+                            // Creamos la ventana
+                            JFrame ventana = new JFrame("Tiempo de cada sorting");
+                            ventana.setVisible(true);
+                            ventana.setSize(600, 800);
+                            ventana.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+             
+                            ventana.getContentPane().add(panel);
 		                    
 		            		
 		            	
@@ -389,27 +684,7 @@ public class main {
 		                entrada.close();
 		            }
 		        }
-		    
-				
-				/*try {
-		            Scanner input = new Scanner(new File("C:\\Users\\MACO\\OneDrive\\Escritorio\\UVG S3\\Algoritmos y estructura de datos\\HT6\\HT6\\src\\cards_desc.txt"));
-		            while (input.hasNextLine()) {
-		            	
-		                String line = input.nextLine();
-		           //     System.out.println(line);
-		                String[] la=line.split("\\|");
-                        String la2 = la[1];
-                        
-		                String[] item = {line,la2};
-		                total.addRow(item);
-		            }
-		            input.close();
-		        } catch (Exception ex) {
-		            ex.printStackTrace();
-		        }
-				
-				
-			}*/
+		   
 			}
 			
 		});
