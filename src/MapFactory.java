@@ -18,19 +18,19 @@ public class MapFactory<K,V>{
     public Map<K,V> getMap(String type){
 
         if(type.equals("tree")){
-            return new TreeMap<K,V>();
+            return new myTreeMap<K,V>();
         }
 
         else if(type.equals("hash")){
-            return new HashMap<K,V>();
+            return new myHashMap<K,V>();
         }
 
         else if(type.equals("linked")){
-            return new LinkedHashMap<K,V>();
+            return new myLinkedHashMap<K,V>();
         }
         
         else{
-            return new TreeMap<K,V>();
+            return new myTreeMap<K,V>();
         }
 
     }

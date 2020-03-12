@@ -1,3 +1,4 @@
+
 /**
  * @author Walter Saldaña #19897
  * @author Marco Ramirez # 
@@ -6,6 +7,7 @@
  * Duane A. Bailey. (2007). Java Structures. 7ma edicion.
  */
 
+import java.util.Collection;
 import java.util.Set;
 
 public interface Map<K,V> {
@@ -73,7 +75,7 @@ public interface Map<K,V> {
     /**
      * @post returns a structure that contains the range of the map
      */
-    public Structure<V> values();
+    public Collection<V> values();
 
     /**
      * @post returns a set of (key-value) pairs, generated from this map
@@ -81,7 +83,7 @@ public interface Map<K,V> {
     public Set<Association<K,V>> entrySet();
 
     /**
-     * @param other Objeto cualqueira a comparar
+     * @param other Objeto cualquiera a comparar
      * @return true si todos los (si tiene) son iguales a las de este Map
      */
     public boolean equals(Object other);
