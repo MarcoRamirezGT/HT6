@@ -177,6 +177,10 @@ public class main {
 		btnTree.setBounds(504, 64, 121, 23);
 		panel.add(btnTree);
 		
+		JLabel lblNewLabel = new JLabel("Elija 1 opcion ");
+		lblNewLabel.setBounds(504, 0, 70, 14);
+		panel.add(lblNewLabel);
+		
 		JButton btnAlmacen = new JButton("Almacen");
 	
 		btnAlmacen.setBounds(177, 11, 89, 23);
